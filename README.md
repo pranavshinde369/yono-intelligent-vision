@@ -42,3 +42,45 @@ yono-intelligent-vision/
   docker-compose.yml # Local deployment helpers
   LICENSE            # Project license
 ```
+## Quick Start
+
+### Option 1 — Run the HTML demo
+```bash
+# Open demo/index.html in a browser
+```
+
+### Option 2 — Run the backend API
+```bash
+cd backend
+pip install -r requirements.txt
+# configure environment variables
+uvicorn app.main:app --reload
+```
+
+### Option 3 — Run the frontend
+```bash
+cd frontend
+npm install
+npx expo start
+```
+
+---
+
+## Environment Variables
+
+```env
+ANTHROPIC_API_KEY=your_key_here
+BHASHINI_API_KEY=your_key_here
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=password
+```
+
+---
+
+## Core Features
+
+- Signal Intelligence Engine for life-stage event detection.
+- Financial Twin with six live health nodes.
+- Narrative Analytics Engine with Money Story, Spend DNA, Goal Runway, Cash Flow Forecast, Tax Radar, Habit Loop, Decision Simulator, and Discipline Score.
+- Trust-gated agentic experiences: Observer, Advisor, and Co-pilot.
