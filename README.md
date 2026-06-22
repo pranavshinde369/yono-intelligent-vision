@@ -84,3 +84,45 @@ NEO4J_PASSWORD=password
 - Financial Twin with six live health nodes.
 - Narrative Analytics Engine with Money Story, Spend DNA, Goal Runway, Cash Flow Forecast, Tax Radar, Habit Loop, Decision Simulator, and Discipline Score.
 - Trust-gated agentic experiences: Observer, Advisor, and Co-pilot.
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | React Native, Expo |
+| Agent Brain | Claude Sonnet 4.6, LangGraph, LangChain |
+| Signal Engine | Python, FastAPI, Scikit-learn, XGBoost |
+| Financial Twin | Neo4j, graph modeling |
+| Analytics | Python, data science models, narrative generation |
+| Voice | Bhashini STT/TTS |
+| Backend | FastAPI, PostgreSQL, Redis |
+| Infrastructure | Docker, docker-compose |
+
+---
+
+## API Highlights
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/twin/build` | Build the user Financial Twin |
+| GET | `/api/v1/twin/{user_id}` | Retrieve the current Twin state |
+| POST | `/api/v1/signals/detect` | Detect life-stage events |
+| POST | `/api/v1/agent/recommend` | Get an AI recommendation |
+| POST | `/api/v1/analytics/money-story` | Generate narrative Money Story |
+
+---
+
+## Compliance
+
+- RBI Account Aggregator framework
+- SEBI MF Central integration
+- DigiLocker document signals
+- DPDP Act 2023 awareness
+- RBI regulatory sandbox readiness
+
+---
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
