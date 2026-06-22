@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YONO Intelligent Vision — Live Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0A0A0A; color: #F5F5F0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+
+  .header { text-align: center; margin-bottom: 2rem; }
+  .header-badge { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #5DCAA5; margin-bottom: .5rem; }
+  .header-title { font-size: 26px; font-weight: 500; margin-bottom: .4rem; }
+  .header-sub { font-size: 14px; color: #888; }
+
+  .phone { width: 360px; background: #1A1A1A; border-radius: 32px; border: 1px solid #2A2A2A; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,.6); }
+  .phone-bar { background: #111; padding: .6rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+  .phone-bar-text { font-size: 11px; color: #555; }
+
+  .app-header { background: #0F3D2E; padding: 1rem 1.25rem .75rem; }
+  .app-title { font-size: 11px; color: #5DCAA5; letter-spacing: .06em; text-transform: uppercase; margin-bottom: .2rem; }
+  .app-name { font-size: 18px; font-weight: 500; color: #fff; }
+  .app-sub { font-size: 12px; color: #5DCAA5; opacity: .8; }
+
+  .screen { display: none; padding: 1rem 1.25rem; min-height: 480px; }
+  .screen.active { display: block; }
+
+  .balance-card { background: #0F3D2E; border-radius: 12px; padding: 1rem; margin-bottom: .75rem; }
+  .bal-label { font-size: 11px; color: #5DCAA5; margin-bottom: .2rem; }
+  .bal-amount { font-size: 28px; font-weight: 500; color: #fff; }
+  .bal-sub { font-size: 11px; color: #5DCAA5; opacity: .7; margin-top: .2rem; }
+
+  .quick-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; margin-bottom: .75rem; }
+  .quick-btn { background: #222; border-radius: 10px; padding: .5rem .25rem; text-align: center; cursor: pointer; border: none; color: #fff; }
+  .quick-icon { font-size: 18px; display: block; margin-bottom: .2rem; }
+  .quick-label { font-size: 10px; color: #888; }
+
+  .saathi-card { background: linear-gradient(135deg, #0F3D2E, #1A5C42); border-radius: 14px; padding: 1rem 1.1rem; margin-bottom: .75rem; border: 1px solid #1D9E75; position: relative; overflow: hidden; }
+  .saathi-card::before { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: radial-gradient(circle, rgba(29,158,117,.3), transparent); border-radius: 50%; }
+  .saathi-tag { font-size: 10px; color: #5DCAA5; letter-spacing: .06em; text-transform: uppercase; margin-bottom: .4rem; display: flex; align-items: center; gap: 5px; }
+  .saathi-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+  .saathi-msg { font-size: 13px; color: #E8F5F1; line-height: 1.6; margin-bottom: .75rem; }
+  .saathi-actions { display: flex; gap: .5rem; }
+  .btn-primary { background: #1D9E75; color: #fff; border: none; border-radius: 8px; padding: .45rem .85rem; font-size: 12px; font-weight: 500; cursor: pointer; flex: 1; }
+  .btn-secondary { background: transparent; color: #5DCAA5; border: 1px solid #1D9E75; border-radius: 8px; padding: .45rem .85rem; font-size: 12px; cursor: pointer; }
+
+  .twin-card { background: #1A1A1A; border-radius: 14px; padding: 1rem; margin-bottom: .75rem; border: 1px solid #2A2A2A; }
+  .twin-title { font-size: 13px; font-weight: 500; color: #fff; margin-bottom: .75rem; display: flex; justify-content: space-between; align-items: center; }
+  .twin-score { font-size: 12px; color: #5DCAA5; background: #0F3D2E; padding: 2px 8px; border-radius: 10px; }
+  .node-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+  .node { background: #222; border-radius: 10px; padding: .6rem .5rem; text-align: center; }
+  .node-label { font-size: 10px; color: #666; margin-bottom: .25rem; }
+  .node-status { font-size: 11px; font-weight: 500; }
+  .status-healthy { color: #1D9E75; }
+  .status-watch { color: #BA7517; }
+  .status-critical { color: #D85A30; }
+  .status-low { color: #7F77DD; }
+
+  .analytics-list { display: flex; flex-direction: column; gap: .6rem; }
+  .analytics-item { background: #1A1A1A; border-radius: 12px; padding: .85rem 1rem; border: 1px solid #2A2A2A; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+  .analytics-icon { font-size: 20px; width: 36px; height: 36px; background: #222; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .analytics-info { flex: 1; }
+  .analytics-name { font-size: 13px; font-weight: 500; color: #fff; margin-bottom: 2px; }
+  .analytics-desc { font-size: 11px; color: #666; }
+  .analytics-arrow { color: #444; font-size: 14px; }
+
+  .story-card { background: #1A1A1A; border-radius: 14px; padding: 1.1rem; margin-bottom: .75rem; border-left: 3px solid #1D9E75; }
+  .story-month { font-size: 11px; color: #5DCAA5; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .5rem; }
+  .story-text { font-size: 13px; color: #CCC; line-height: 1.7; font-style: italic; }
+  .story-action { display: inline-block; margin-top: .6rem; font-size: 11px; padding: 3px 10px; border-radius: 10px; background: #0F3D2E; color: #5DCAA5; }
+
+  .spend-bar-wrap { margin-bottom: .75rem; }
+  .spend-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: .4rem; }
+  .spend-bar-label { font-size: 11px; color: #888; min-width: 110px; }
+  .spend-bar-track { flex: 1; height: 6px; background: #2A2A2A; border-radius: 3px; overflow: hidden; }
+  .spend-bar-fill { height: 100%; border-radius: 3px; }
+  .fill-green { background: #1D9E75; }
+  .fill-red { background: #D85A30; }
+  .fill-gray { background: #555; }
+  .spend-bar-val { font-size: 11px; min-width: 36px; text-align: right; }
+  .val-red { color: #D85A30; }
+  .val-green { color: #1D9E75; }
+
+  .nav-bar { background: #111; border-top: 1px solid #2A2A2A; display: flex; padding: .5rem 0 .25rem; }
+  .nav-item { flex: 1; text-align: center; cursor: pointer; padding: .3rem; border: none; background: transparent; }
+  .nav-icon { font-size: 20px; display: block; }
+  .nav-label { font-size: 9px; color: #555; margin-top: 2px; }
+  .nav-item.active .nav-label { color: #1D9E75; }
+
+  .confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); align-items: flex-end; justify-content: center; z-index: 100; }
+  .confirm-overlay.show { display: flex; }
+  .confirm-sheet { background: #1A1A1A; border-radius: 20px 20px 0 0; padding: 1.5rem 1.25rem 2rem; width: 360px; }
+  .confirm-title { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: .5rem; }
+  .confirm-desc { font-size: 13px; color: #888; line-height: 1.6; margin-bottom: 1.25rem; }
+  .confirm-detail { background: #0F3D2E; border-radius: 10px; padding: .75rem 1rem; margin-bottom: 1.25rem; }
+  .confirm-row { display: flex; justify-content: space-between; font-size: 13px; color: #CCC; margin-bottom: .3rem; }
+  .confirm-row:last-child { margin-bottom: 0; color: #5DCAA5; font-weight: 500; }
+  .confirm-btns { display: flex; gap: .6rem; }
+  .confirm-yes { background: #1D9E75; color: #fff; border: none; border-radius: 10px; padding: .75rem; font-size: 14px; font-weight: 500; cursor: pointer; flex: 2; }
+  .confirm-no { background: #222; color: #888; border: none; border-radius: 10px; padding: .75rem; font-size: 14px; cursor: pointer; flex: 1; }
+
+  .success-screen { text-align: center; padding: 2rem 1rem; }
+  .success-icon { font-size: 56px; margin-bottom: 1rem; }
+  .success-title { font-size: 18px; font-weight: 500; color: #fff; margin-bottom: .5rem; }
+  .success-desc { font-size: 13px; color: #888; line-height: 1.6; margin-bottom: 1.5rem; }
+  .success-twin { background: #0F3D2E; border-radius: 12px; padding: .85rem 1rem; margin-bottom: 1rem; }
+  .success-twin-label { font-size: 11px; color: #5DCAA5; margin-bottom: .3rem; }
+  .success-twin-change { font-size: 13px; color: #fff; }
+
+  .tab-bar { display: flex; gap: .4rem; margin-bottom: 1rem; }
+  .tab { flex: 1; padding: .4rem; border-radius: 8px; border: none; background: #222; color: #666; font-size: 11px; cursor: pointer; text-align: center; }
+  .tab.active { background: #0F3D2E; color: #5DCAA5; }
+
+  .section-title { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .6rem; margin-top: .75rem; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">SBI Hackathon @ GFF 2026 · Digital Adoption</div>
+  <div class="header-title">YONO Intelligent Vision</div>
+  <div class="header-sub">Interactive Demo — Rahul's Promotion Moment</div>
+</div>
+
+<div class="phone">
+  <div class="phone-bar">
+    <span class="phone-bar-text">9:41</span>
+    <span class="phone-bar-text">●●●●● SBI</span>
+    <span class="phone-bar-text">🔋 87%</span>
+  </div>
+  <div class="app-header">
+    <div class="app-title">SBI YONO · Intelligent Vision</div>
+    <div class="app-name">Good morning, Rahul 👋</div>
+    <div class="app-sub">Your financial twin is up to date</div>
+  </div>
+
+  <!-- SCREEN 1: HOME -->
+  <div class="screen active" id="screen-home">
+    <div style="padding-top:.75rem">
+      <div class="balance-card">
+        <div class="bal-label">Available balance</div>
+        <div class="bal-amount">₹42,180</div>
+        <div class="bal-sub">SBI Savings Account · ****4821</div>
+      </div>
+
+      <div class="quick-row">
+        <button class="quick-btn"><span class="quick-icon">↑</span><span class="quick-label">Send</span></button>
+        <button class="quick-btn"><span class="quick-icon">↓</span><span class="quick-label">Receive</span></button>
+        <button class="quick-btn"><span class="quick-icon">📄</span><span class="quick-label">Bills</span></button>
+        <button class="quick-btn"><span class="quick-icon">⋯</span><span class="quick-label">More</span></button>
+      </div>
+
+      <div class="saathi-card" id="saathi-card">
+        <div class="saathi-tag"><div class="saathi-dot"></div>FinSaathi · Life event detected</div>
+        <div class="saathi-msg" id="saathi-msg">
+          Rahul, your salary jumped to ₹35,000 this month — congratulations on the promotion! 🎉 Your protection score is still critical — no life cover detected. Before growing wealth, let's secure what you've built. A ₹50L term plan costs just ₹485/month.
+        </div>
+        <div class="saathi-actions">
+          <button class="btn-primary" onclick="showConfirm()">Get term plan</button>
+          <button class="btn-secondary" onclick="showAnalytics()">Tell me more</button>
+        </div>
+      </div>
+
+      <div class="twin-card">
+        <div class="twin-title">Financial Twin <span class="twin-score">Score: 58/100</span></div>
+        <div class="node-grid">
+          <div class="node"><div class="node-label">Income</div><div class="node-status status-healthy">Healthy</div></div>
+          <div class="node"><div class="node-label">Liabilities</div><div class="node-status status-watch">Watch</div></div>
+          <div class="node"><div class="node-label">Protection</div><div class="node-status status-critical">Critical ⚠️</div></div>
+          <div class="node"><div class="node-label">Growth</div><div class="node-status status-low">Low</div></div>
+          <div class="node"><div class="node-label">Tax</div><div class="node-status status-watch">Gap: ₹1.26L</div></div>
+          <div class="node"><div class="node-label">Goals</div><div class="node-status status-watch">2 active</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: ANALYTICS -->
+  <div class="screen" id="screen-analytics">
+    <div style="padding-top:.75rem">
+      <div class="tab-bar">
+        <button class="tab active" onclick="showTab('money-story')">Money Story</button>
+        <button class="tab" onclick="showTab('spend-dna')">Spend DNA</button>
+        <button class="tab" onclick="showTab('tax-radar')">Tax Radar</button>
+      </div>
+
+      <div id="tab-money-story">
+        <div class="story-card">
+          <div class="story-month">October 2025 · Money Story</div>
+          <div class="story-text">
+            "October was your strongest savings month in a year — you put away ₹8,200, a 23% savings rate. Your SIP of ₹2,000 invested on time for the 11th straight month, a habit worth protecting. One concern: ₹3,840 on food delivery — that's ₹46,000 a year, or 1.4 years of SIP returns going up in smoke. Your home goal is 6 months behind — cutting food delivery by ₹1,500/month puts it back on track."
+          </div>
+          <span class="story-action">→ Set smart food limit</span>
+        </div>
+        <div class="section-title">This month at a glance</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+          <div class="node" style="text-align:left;padding:.7rem .85rem"><div class="node-label">Income</div><div style="font-size:15px;font-weight:500;color:#fff;margin-top:.2rem">₹35,000</div></div>
+          <div class="node" style="text-align:left;padding:.7rem .85rem"><div class="node-label">Expenses</div><div style="font-size:15px;font-weight:500;color:#D85A30;margin-top:.2rem">₹26,800</div></div>
+          <div class="node" style="text-align:left;padding:.7rem .85rem"><div class="node-label">Saved</div><div style="font-size:15px;font-weight:500;color:#1D9E75;margin-top:.2rem">₹8,200</div></div>
+          <div class="node" style="text-align:left;padding:.7rem .85rem"><div class="node-label">Invested</div><div style="font-size:15px;font-weight:500;color:#7F77DD;margin-top:.2rem">₹2,000</div></div>
+        </div>
+      </div>
+
+      <div id="tab-spend-dna" style="display:none">
+        <div class="section-title">Your spend vs Pune peers (age 26–30, ₹30–40k)</div>
+        <div class="spend-bar-wrap">
+          <div class="spend-bar-row"><div class="spend-bar-label">Food delivery</div><div class="spend-bar-track"><div class="spend-bar-fill fill-red" style="width:78%"></div></div><div class="spend-bar-val val-red">+58%</div></div>
+          <div class="spend-bar-row"><div class="spend-bar-label">Groceries</div><div class="spend-bar-track"><div class="spend-bar-fill fill-green" style="width:48%"></div></div><div class="spend-bar-val val-green">-12%</div></div>
+          <div class="spend-bar-row"><div class="spend-bar-label">Transport</div><div class="spend-bar-track"><div class="spend-bar-fill fill-green" style="width:35%"></div></div><div class="spend-bar-val val-green">-28%</div></div>
+          <div class="spend-bar-row"><div class="spend-bar-label">Entertainment</div><div class="spend-bar-track"><div class="spend-bar-fill fill-gray" style="width:52%"></div></div><div class="spend-bar-val" style="color:#888">avg</div></div>
+          <div class="spend-bar-row"><div class="spend-bar-label">Investments</div><div class="spend-bar-track"><div class="spend-bar-fill fill-green" style="width:65%"></div></div><div class="spend-bar-val val-green">+18%</div></div>
+        </div>
+        <div class="saathi-card" style="margin-top:.5rem">
+          <div class="saathi-tag"><div class="saathi-dot"></div>FinSaathi insight</div>
+          <div class="saathi-msg" style="font-size:12px">₹3,840 on Zomato + Swiggy is 58% above your peer group. At this rate, you're spending ₹46,000/year on food delivery — at 12% CAGR, that's ₹1.8L in 3 years if invested instead.</div>
+          <div class="saathi-actions"><button class="btn-primary" style="font-size:11px">Set ₹2,000 monthly limit</button></div>
+        </div>
+      </div>
+
+      <div id="tab-tax-radar" style="display:none">
+        <div class="section-title">FY 2025–26 tax utilisation</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem">
+          <div class="node" style="text-align:left;padding:.7rem .85rem;display:flex;justify-content:space-between;align-items:center"><div><div class="node-label">Section 80C</div><div style="font-size:13px;color:#fff;margin-top:.15rem">₹24,000 of ₹1,50,000 used</div></div><div style="font-size:12px;color:#D85A30;font-weight:500">Gap: ₹1.26L</div></div>
+          <div class="node" style="text-align:left;padding:.7rem .85rem;display:flex;justify-content:space-between;align-items:center"><div><div class="node-label">Section 80D (Health)</div><div style="font-size:13px;color:#fff;margin-top:.15rem">₹0 of ₹25,000 used</div></div><div style="font-size:12px;color:#D85A30;font-weight:500">Unused</div></div>
+          <div class="node" style="text-align:left;padding:.7rem .85rem;display:flex;justify-content:space-between;align-items:center"><div><div class="node-label">NPS 80CCD(1B)</div><div style="font-size:13px;color:#fff;margin-top:.15rem">₹0 of ₹50,000 used</div></div><div style="font-size:12px;color:#BA7517;font-weight:500">Opportunity</div></div>
+        </div>
+        <div class="saathi-card">
+          <div class="saathi-tag"><div class="saathi-dot"></div>Tax saving opportunity</div>
+          <div class="saathi-msg" style="font-size:12px">You can save ₹18,720 in taxes before March 31. Invest ₹25,000 in health cover (saves ₹5,000 tax) and ₹50,000 in ELSS SIP (saves ₹10,000 tax). Both available in YONO.</div>
+          <div class="saathi-actions"><button class="btn-primary" style="font-size:11px">Start both — 2 taps</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: SUCCESS -->
+  <div class="screen" id="screen-success">
+    <div class="success-screen">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Term plan activated!</div>
+      <div class="success-desc">₹50L life cover · ₹485/month · SBI Life Insurance<br>Your family is now protected.</div>
+      <div class="success-twin">
+        <div class="success-twin-label">Financial Twin update</div>
+        <div class="success-twin-change">Protection node: 🔴 Critical → 🟡 Watch</div>
+      </div>
+      <div class="success-twin" style="background:#1A1A2E;border:1px solid #7F77DD">
+        <div class="success-twin-label" style="color:#7F77DD">Next recommendation</div>
+        <div class="success-twin-change" style="font-size:12px;color:#CCC">Now that protection is covered, let's work on your Growth node — start a ₹1,000 ELSS SIP for tax savings + wealth.</div>
+      </div>
+      <button class="btn-primary" style="margin-top:.75rem;width:100%;padding:.75rem;font-size:14px" onclick="goHome()">Back to home</button>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-item active" onclick="showScreen('home')"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+    <button class="nav-item" onclick="showScreen('analytics')"><span class="nav-icon">📊</span><span class="nav-label">Analytics</span></button>
+    <button class="nav-item"><span class="nav-icon">💳</span><span class="nav-label">Cards</span></button>
+    <button class="nav-item"><span class="nav-icon">👤</span><span class="nav-label">Profile</span></button>
+  </div>
+</div>
+
+<!-- CONFIRM SHEET -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-sheet">
+    <div class="confirm-title">Activate term insurance</div>
+    <div class="confirm-desc">FinSaathi recommends this based on your Financial Twin — Protection node is currently Critical with no life cover detected.</div>
+    <div class="confirm-detail">
+      <div class="confirm-row"><span>Product</span><span>SBI Life — eShield Next</span></div>
+      <div class="confirm-row"><span>Cover amount</span><span>₹50,00,000</span></div>
+      <div class="confirm-row"><span>Monthly premium</span><span>₹485/month</span></div>
+      <div class="confirm-row"><span>Protection period</span><span>30 years</span></div>
+      <div class="confirm-row"><span>Tax benefit (80C)</span><span>₹5,820/year</span></div>
+    </div>
+    <div class="confirm-btns">
+      <button class="confirm-no" onclick="hideConfirm()">Cancel</button>
+      <button class="confirm-yes" onclick="showSuccess()">Confirm & activate</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+function showAnalytics() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-analytics').classList.add('active');
+}
+function showTab(name) {
+  document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).style.display = 'block';
+  event.currentTarget.classList.add('active');
+}
+function showConfirm() {
+  document.getElementById('confirm-overlay').classList.add('show');
+}
+function hideConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('show');
+}
+function showSuccess() {
+  hideConfirm();
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-success').classList.add('active');
+}
+function goHome() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-home').classList.add('active');
+  document.getElementById('saathi-msg').innerHTML = 'Great move protecting your family! 🛡️ Now let\'s work on your Growth node — start a ₹1,000/month ELSS SIP for tax savings + long-term wealth.';
+}
+</script>
+</body>
+</html>
