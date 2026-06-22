@@ -1,6 +1,6 @@
 # YONO Intelligent Vision
 
-> **SBI Hackathon @ GFF 2026 — Digital Adoption Track**
+> **SBI Hackathon @ GFF 2026 ï¿½ Digital Adoption Track**
 
 YONO Intelligent Vision is an agentic AI layer embedded inside SBI YONO that detects life-stage transitions, builds a live Financial Twin, and delivers narrative analytics. It turns YONO from a transaction utility into a proactive financial advisor for every Indian user.
 
@@ -44,12 +44,12 @@ yono-intelligent-vision/
 ```
 ## Quick Start
 
-### Option 1 — Run the HTML demo
+### Option 1 ï¿½ Run the HTML demo
 ```bash
 # Open demo/index.html in a browser
 ```
 
-### Option 2 — Run the backend API
+### Option 2 ï¿½ Run the backend API
 ```bash
 cd backend
 pip install -r requirements.txt
@@ -57,7 +57,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-### Option 3 — Run the frontend
+### Option 3 ï¿½ Run the frontend
 ```bash
 cd frontend
 npm install
@@ -65,7 +65,17 @@ npx expo start
 ```
 
 ---
+## Demo Screenshots
 
+Interactive demo screenshots are available in `demo/screenshots`.
+
+![YONO Intelligent Vision Home screen](demo/screenshots/screenshot-01.png)
+
+![Agent recommendation and protection insight](demo/screenshots/screenshot-02.png)
+
+![Financial Twin score and policy activation flow](demo/screenshots/screenshot-03.png)
+
+---
 ## Environment Variables
 
 ```env
